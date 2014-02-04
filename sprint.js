@@ -9,7 +9,8 @@ Sprint = (function() {
 	$(function() {
 		$(window).on("popstate", function(e) {
 			if (e.originalEvent.state !== null) {
-				Sprint.navigate(e.originalEvent.state.page, 'default', true);
+				Sprint.navigate(e.originalEvent.state.page, 'default', 
+					{ backButtonPress : true });
 			}
 		} );
 
@@ -30,14 +31,25 @@ Sprint = (function() {
 	//     return n === +n && n === (n|0);
 	// }
 
-	function checkTypes(functionName, checkValues, types) {
+	function strictCheckTypes(functionName, checkValues, types) {
 		for (var i = 0; i < checkValues.length; i++) {
 			var checkValueType = typeof checkValues[i];
 			if (checkValueType !== types[i]) {
 				throw new Error(functionName + "() : expected type "
 					+ types[i] + " but was type "
-					+ checkValueType + " in function parameters");
+					+ checkValueType + " in function parameters. Index is " + i);
 			}
+		}
+	}
+
+	function looseCheckTypes(functionNames, checkValues, types) {
+		for (var i = 0; i < checkValues.length; i++) {
+			var checkValueType = typeof checkValues[i];
+			if (checkValueType !== types[i] && checkValueType !== 'undefined') {
+				throw new Error(functionName + "() : expected type of "
+					+ types[i] + " or undefined, but was type "
+					+ checkValueType + " in function parameters. Index is " + i);
+			}			
 		}
 	}
 	
@@ -76,7 +88,7 @@ Sprint = (function() {
 		return pageName;
 	}
 
-	function ajaxNavigate(pageName, transitionName, backButtonPress) {
+	function ajaxNavigate(pageName, transitionName, options) {
 
 		var request = null;
 
@@ -86,7 +98,7 @@ Sprint = (function() {
 			request = $.ajax({
 				url: page.pageUrl,
 				type: "get",
-				data: formatUrlParameters(page.publicParams, page.hiddenParams, transitionName)
+				data: formatUrlParameters(options.publicParams, options.hiddenParams, transitionName)
 			});
 
 			request.done(function (response, textStatus, jqXHR) {
@@ -96,10 +108,10 @@ Sprint = (function() {
 				$('#spring_spinner').remove();
 
 				pages[pageName].pageHandler();
-				if (!backButtonPress) {
-					if (page.publicParams !== '') page.publicParams = '?' + page.publicParams;
+				if (!options.backButtonPress) {
+					if (options.publicParams !== '') options.publicParams = '?' + options.publicParams;
 					window.history.pushState({
-						page:pageName}, '', page.pageUrl + page.publicParams);
+						page:pageName}, '', page.pageUrl + options.publicParams);
 				}
 			});
 		} else {
@@ -112,9 +124,9 @@ Sprint = (function() {
 		addPage : function (pageName, options) {
 			// options = { pageUrl : '', publicParams : '', hiddenParams : '' }
 
-			checkTypes('addPage', 
-				[pageName, options.pageUrl, options.publicParams, options.hiddenParams, options.pageHandler], 
-				['string', 'string', 'string', 'string', 'function']);
+			strictCheckTypes('addPage', 
+				[pageName, options.pageUrl, options.pageHandler], 
+				['string', 'string', 'function']);
 
 			pages[pageName] = options;
 
@@ -128,14 +140,22 @@ Sprint = (function() {
 
 		},
 
-		navigate : function (pageName, transitionName, backButtonPress) {
+		navigate : function (pageName, transitionName, options) {
 
-			checkTypes('navigate', 
-				[pageName, transitionName, backButtonPress, transitions[transitionName]], 
-				['string', 'string', 'boolean', 'number']);
+			strictCheckTypes('navigate', 
+				[pageName, transitionName, options, options.backButtonPress, 
+					transitions[transitionName]], 
+				['string', 'string', 'object', 'boolean', 'number']);
+
+			looseCheckTypes('navigate',
+				[options.publicParams, options.hiddenParams],
+				['string', 'string']);
+
+			if (typeof options.publicParams === 'undefined') options.publicParams = '';
+			if (typeof options.hiddenParams === 'undefined') options.hiddenParams = '';
 
 			$( '#ajaxContent_' + transitions[transitionName] ).fadeOut( 120, function() {
-				ajaxNavigate(pageName, transitionName, backButtonPress);
+				ajaxNavigate(pageName, transitionName, options);
 			});
 
 		}

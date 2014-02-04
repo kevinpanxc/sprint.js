@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+		<script type="text/javascript" src="jquery-1.8.3.js"></script>
 		<script type="text/javascript" src="sprint.js"></script>
 		<script type="text/javascript" src="sprint_config.js"></script>
 	</head>
@@ -8,9 +8,9 @@
 		<div id="ajaxContent_1">
 			<div class='pageInfo' data-pagename='testpageone'></div>
 			HELLO
-			<button onclick="Sprint.navigate('testpagethree', 'default', false)">TESTPAGETHREE</button>
+			<button onclick="Sprint.navigate('testpagethree', 'default', {backButtonPress : false})">TESTPAGETHREE</button>
 			<div id="ajaxContent_2">
-				<button onclick="Sprint.navigate('typetwo_testpagetwo', 'typetwo', false)">SMALLER NAV</button>
+				<button onclick="Sprint.navigate('typetwo_testpagetwo', 'typetwo', {backButtonPress : false})">SMALLER NAV</button>
 				Ajax Content 2</br>
 				PAGE 1
 			</div>

@@ -1,32 +1,22 @@
 Sprint.addPage('testpagetwo',
 	{ pageUrl : '/SprintJS/testpagetwoajax.html',
-		publicParams : '',
-		hiddenParams : '',
 		pageHandler : testPageTwoHandler });
 
 Sprint.addPage('testpageone',
 	{ pageUrl : '/SprintJS/testpageoneajax.html',
-		publicParams : '',
-		hiddenParams : '',
 		pageHandler : testPageOneHandler });
 
 Sprint.addPage('testpagethree',
 	{ pageUrl : '/SprintJS/testpagethreeajax.html',
-		publicParams : '',
-		hiddenParams : '',
 		pageHandler : testPageThreeHandler });
 
 Sprint.addPage('typetwo_testpagetwo',
 	{ pageUrl : '/SprintJS/typetwo_testpagetwo.html',
-		publicParams : '',
-		hiddenParams : '',
 		pageHandler : function () {}
 	});
 
 Sprint.addPage('typetwo_testpageone',
 	{ pageUrl : '/SprintJS/typetwo_testpageone.html',
-		publicParams : '',
-		hiddenParams : '',
 		pageHandler : function () {}
 	});
 
