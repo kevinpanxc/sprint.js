@@ -8,15 +8,27 @@ Sprint = (function() {
 
 	$(function() {
 		$(window).on("popstate", function(e) {
-			if (e.originalEvent.state !== null) {
-				Sprint.navigate(e.originalEvent.state.page, 'default', 
-					{ backButtonPress : true });
+			var state = e.originalEvent.state;
+			if (state !== null) {
+				Sprint.navigate(state.page, 'default', 
+					{ backButtonPress : true,
+						publicParams : state.publicParams,
+						hiddenParams : state.hiddenParams });
 			}
 		} );
 
-		var pageName = getPageData();
+		var serverData = retrieveServerData()
 
-		window.history.replaceState({page:pageName}, '', getUrlPathAfterDomain());
+		var pageName = serverData.pageName;
+
+		var publicParams = serverData.publicParams;
+
+		var hiddenParams = serverData.hiddenParams;
+
+		window.history.replaceState({
+			page:pageName,
+			publicParams:publicParams,
+			hiddenParams:hiddenParams}, '', getUrlPathAfterDomain());
 
 		pages[pageName].pageHandler();
 	});
@@ -46,7 +58,7 @@ Sprint = (function() {
 		for (var i = 0; i < checkValues.length; i++) {
 			var checkValueType = typeof checkValues[i];
 			if (checkValueType !== types[i] && checkValueType !== 'undefined') {
-				throw new Error(functionName + "() : expected type of "
+				throw new Error(functionNames + "() : expected type of "
 					+ types[i] + " or undefined, but was type "
 					+ checkValueType + " in function parameters. Index is " + i);
 			}			
@@ -82,10 +94,32 @@ Sprint = (function() {
 		return a.pathname + a.search;
 	}
 
-	function getPageData() {
+	function retrieveServerData() {
+		var userDefinedData = null;
 		var pageName = $('.pageInfo').data('pagename');
-		$( '.pageInfo' ).remove();
-		return pageName;
+		var publicParams = $('.publicParams').data('publicparams');
+		var hiddenParams = $('.hiddenParams').data('hiddenparams');
+
+		if (pages.hasOwnProperty(pageName)) {
+			pages[pageName].dataHandler();
+		} else {
+			throw new Error('retrieveServerData() : page name, ' 
+				+ pageName
+				+ ', retrieved from server does not correspond to an existing page');
+		}
+
+		if (typeof publicParams === 'undefined'
+				|| publicParams === null) publicParams = '';
+		if (typeof hiddenParams === 'undefined' 
+				|| hiddenParams === null) hiddenParams = '';
+
+		$( '.infoContainer' ).remove();
+
+		return {
+			pageName : pageName,
+			publicParams : publicParams,
+			hiddenParams : hiddenParams
+		};
 	}
 
 	function ajaxNavigate(pageName, transitionName, options) {
@@ -109,9 +143,12 @@ Sprint = (function() {
 
 				pages[pageName].pageHandler();
 				if (!options.backButtonPress) {
-					if (options.publicParams !== '') options.publicParams = '?' + options.publicParams;
+					var pageUrl = page.pageUrl;
+					if (options.publicParams !== '') pageUrl = page.pageUrl + '?' + options.publicParams;
 					window.history.pushState({
-						page:pageName}, '', page.pageUrl + options.publicParams);
+						page:pageName,
+						publicParams:options.publicParams,
+						hiddenParams:options.hiddenParams }, '', pageUrl);
 				}
 			});
 		} else {
@@ -125,8 +162,15 @@ Sprint = (function() {
 			// options = { pageUrl : '', publicParams : '', hiddenParams : '' }
 
 			strictCheckTypes('addPage', 
-				[pageName, options.pageUrl, options.pageHandler], 
-				['string', 'string', 'function']);
+				[pageName, options.pageUrl], 
+				['string', 'string']);
+
+			looseCheckTypes('addPage',
+				[options.pageHandler, options.dataHandler],
+				['function', 'function']);
+
+			if (typeof options.pageHandler === 'undefined') options.pageHandler = function() {};
+			if (typeof options.dataHandler === 'undefined') options.dataHandler = function() {};
 
 			pages[pageName] = options;
 
