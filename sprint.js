@@ -6,6 +6,8 @@ Sprint = (function() {
 
 	var transitions = { default : 1 };
 
+	var userData = null;
+
 	$(function() {
 		$(window).on("popstate", function(e) {
 			var state = e.originalEvent.state;
@@ -17,7 +19,7 @@ Sprint = (function() {
 			}
 		} );
 
-		var serverData = retrieveServerData()
+		var serverData = retrieveServerData();
 
 		var pageName = serverData.pageName;
 
@@ -30,7 +32,7 @@ Sprint = (function() {
 			publicParams:publicParams,
 			hiddenParams:hiddenParams}, '', getUrlPathAfterDomain());
 
-		pages[pageName].pageHandler();
+		callPageHandlers(pageName);
 	});
 
 	function isInt(n) {
@@ -99,10 +101,7 @@ Sprint = (function() {
 		var pageName = $('.pageInfo').data('pagename');
 		var publicParams = $('.publicParams').data('publicparams');
 		var hiddenParams = $('.hiddenParams').data('hiddenparams');
-
-		if (pages.hasOwnProperty(pageName)) {
-			pages[pageName].dataHandler();
-		} else {
+		if (!pages.hasOwnProperty(pageName)) {
 			throw new Error('retrieveServerData() : page name, ' 
 				+ pageName
 				+ ', retrieved from server does not correspond to an existing page');
@@ -122,11 +121,20 @@ Sprint = (function() {
 		};
 	}
 
+	function callPageHandlers(pageName) {
+		// dataHandler must always be called before page handler since page handler
+		// often needs data retrieved from data handler to work
+		userData = pages[pageName].dataHandler();
+		pages[pageName].pageHandler();
+	}
+
 	function ajaxNavigate(pageName, transitionName, options) {
 
 		var request = null;
 
 		var page = pages[pageName];
+
+		userData = null;
 
 		if ( page ) {
 			request = $.ajax({
@@ -141,7 +149,8 @@ Sprint = (function() {
 				ajaxContent.style.display = 'block';
 				$('#spring_spinner').remove();
 
-				pages[pageName].pageHandler();
+				callPageHandlers(pageName);
+
 				if (!options.backButtonPress) {
 					var pageUrl = page.pageUrl;
 					if (options.publicParams !== '') pageUrl = page.pageUrl + '?' + options.publicParams;
@@ -158,6 +167,10 @@ Sprint = (function() {
 
 	return {
 
+		getUserData : function () {
+			return userData;
+		},
+
 		addPage : function (pageName, options) {
 			// options = { pageUrl : '', publicParams : '', hiddenParams : '' }
 
@@ -170,7 +183,7 @@ Sprint = (function() {
 				['function', 'function']);
 
 			if (typeof options.pageHandler === 'undefined') options.pageHandler = function() {};
-			if (typeof options.dataHandler === 'undefined') options.dataHandler = function() {};
+			if (typeof options.dataHandler === 'undefined') options.dataHandler = function() { return null; };
 
 			pages[pageName] = options;
 
