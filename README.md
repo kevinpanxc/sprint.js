@@ -85,7 +85,7 @@ On each load of a Sprint page without using the Sprint navigate function (i.e. t
 
 You can send custom user data from the server to Sprint by passing a `dataHandler` function as a parameter to the `addPage` function. The `dataHandler` function should return the server information. Sprint calls this function and picks this information up in a private variable called `userData`. You can access this variable through the function `getUserData`.
 
-## Basic Sprint HTML page structure
+## Sample Sprint HTML Page Structure
 
 ```HTML
 <html>
