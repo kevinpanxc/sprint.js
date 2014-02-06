@@ -1,22 +1,22 @@
 Sprint.addPage('testpagetwo',
-	{ pageUrl : '/SprintJS/testpagetwoajax.html',
+	{ pageUrl : '/SprintJS/static demo/testpagetwoajax.html',
 		pageHandler : testPageTwoHandler });
 
 Sprint.addPage('testpageone',
-	{ pageUrl : '/SprintJS/testpageoneajax.html',
+	{ pageUrl : '/SprintJS/static demo/testpageoneajax.html',
 		pageHandler : testPageOneHandler });
 
 Sprint.addPage('testpagethree',
-	{ pageUrl : '/SprintJS/testpagethreeajax.html',
+	{ pageUrl : '/SprintJS/static demo/testpagethreeajax.html',
 		pageHandler : testPageThreeHandler });
 
 Sprint.addPage('typetwo_testpagetwo',
-	{ pageUrl : '/SprintJS/typetwo_testpagetwo.html',
+	{ pageUrl : '/SprintJS/static demo/typetwo_testpagetwo.html',
 		pageHandler : function () {}
 	});
 
 Sprint.addPage('typetwo_testpageone',
-	{ pageUrl : '/SprintJS/typetwo_testpageone.html',
+	{ pageUrl : '/SprintJS/static demo/typetwo_testpageone.html',
 		pageHandler : function () {}
 	});
 
