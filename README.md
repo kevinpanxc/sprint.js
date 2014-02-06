@@ -15,7 +15,7 @@ Sprint provides a very simple API via the Sprint JavaScript object. The public f
 
 ### Adding Pages
 
-Sprint needs to be aware of the different pages of the website in order to run the right JS scripts on page load for each page. 
+Sprint needs to be aware of the website's pages. Sprint uses this information to run the right functions on page load for each page.
 
 ```js
 Sprint.addPage('HOME',
@@ -32,13 +32,13 @@ The `pageUrl` property is the URL of the webpage relative to the root path of th
 
 ### Adding transitions
 
-Transitions tell Sprint which areas of the page to replace with new content from the server on each page load.
+Transitions tell Sprint which areas of the page to replace with new content from the server after a Sprint navigation.
 
 ```js
 Sprint.addTransition('partialpageload', 2);
 ```
 
-The second parameter to the `addTransition` function indicates which div's contents should be replaced. The div is identified by the id with format `ajaxContent_{#}` where `{#}` is the second parameter of the transition function. I'm going to call this the **transition number**.
+The second parameter to the `addTransition` function indicates which div's contents should be replaced. The div is identified by the id with format `ajaxContent_{#}` where `{#}` is an integar and the second parameter of the transition function. I'm going to call this ({#}) the **transition number**.
 
 ### Default transition
 
@@ -59,7 +59,7 @@ Sprint.navigate('HOME', 'default',
 						hiddenParams : 'dontshowonpageurl=its-a-secret'});
 ```
 
-The first parameter is the page name, the second parameter is the transition name, the third parameter is an options object that specifies whether this request was launched from a browser back/forward button press, the public URL parameters for the request and the hidden URL parameters for the request.
+The first parameter is the page name, the second parameter is the transition name, the third parameter is an options object. The options object specifies the public and hidden URL parameters for the request. It also specifies whether this request was launched from a browser back/forward button click.
 
 THe page name parameter tells Sprint which page onload function to run. These onload functions should have been specified in the `addPage` functions.
 
@@ -69,7 +69,7 @@ Public URL parameters are shown in the URL of the page after an Ajax navigation.
 
 ### Hidden URL Parameters
 
-Hidden URL parameters are not shown in the URL of the page after an Ajax navigation. Sprint has a default hidden parameter called `ajax` which is set to true for each page request sent through Sprint. Another default hidden parameter is called `partial` which is only present when the transition number is greater than 1. The value of the `partial` parameter is value of the transition number.
+Hidden URL parameters are not shown in the URL of the page after an Ajax navigation. Sprint has a default hidden parameter called `ajax` which is set to true for each page request sent through Sprint. Another default hidden parameter is called `partial` which is only present when the transition number is greater than 1. The value of the `partial` parameter is the value of the transition number.
 
 ### On the Server
 
@@ -79,11 +79,11 @@ For example, when a request is received with the URL parameter `ajax=true` and w
 
 ## Directly Loading Sprint Pages
 
-On each load of a Sprint page without using the Sprint navigate function (i.e. typing the page's URL directly into the browser's URL bar), Sprint expects a div with classes `pageInfo` and `infoContainer` with data attribute `pagename` that contains the corresponding page's name. Sprint will remove the div and execute the corresponding page's onload JavaScript function.
+On each load of a Sprint page without using the Sprint navigate function (i.e. typing the page's URL directly into the browser's URL bar), Sprint expects a div with classes `pageInfo` and `infoContainer` and with a data attribute `pagename` that contains the corresponding page's name. Sprint will remove the div and execute the page's onload JavaScript function.
 
 ## Custom Data from Server
 
-You can send custom user data from the server to Sprint by passing a `dataHandler` function as a parameter to the `addPage` function. The `dataHandler` function should return the server information. Sprint picks this information up in a private variable called `userData` and gives access to this variable through the function `getUserData`.
+You can send custom user data from the server to Sprint by passing a `dataHandler` function as a parameter to the `addPage` function. The `dataHandler` function should return the server information. Sprint calls this function and picks this information up in a private variable called `userData`. You can access this variable through the function `getUserData`.
 
 ## Basic Sprint HTML page structure
 
