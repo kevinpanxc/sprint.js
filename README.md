@@ -38,7 +38,7 @@ Transitions tell Sprint which areas of the page to replace with new content from
 Sprint.addTransition('partialpageload', 2);
 ```
 
-The second parameter to the `addTransition` function indicates which div's contents should be replaced. The div is identified by the id with format `ajaxContent_{#}` where `{#}` is an integar and the second parameter of the transition function. I'm going to call this ({#}) the **transition number**.
+The second parameter to the `addTransition` function indicates which div's contents should be replaced. The div is identified by the id with format `ajaxContent_{#}` where `{#}` is an integer and the second parameter of the transition function. I'm going to call this ({#}) the **transition number**.
 
 ### Default transition
 
