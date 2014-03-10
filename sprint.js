@@ -9,14 +9,17 @@ Sprint = (function() {
 	var userData = null;
 
 	$(function() {
+		var chromeHistoryAPIBugFix = false; // Chrome and Safari calls onpopstate on page load
+
 		$(window).on("popstate", function(e) {
 			var state = e.originalEvent.state;
-			if (state !== null) {
+			if (state !== null && chromeHistoryAPIBugFix) {
 				Sprint.navigate(state.page, 'default', 
 					{ backButtonPress : true,
 						publicParams : state.publicParams,
 						hiddenParams : state.hiddenParams });
 			}
+			chromeHistoryAPIBugFix = true;
 		} );
 
 		var serverData = retrieveServerData();
@@ -93,7 +96,13 @@ Sprint = (function() {
 	function getUrlPathAfterDomain () {
 		var a = document.createElement('a');
 		a.href = document.URL;
-		return a.pathname + a.search;
+
+		// solution for IE returning a different string for a.pathname
+		if (a.pathname.charAt(0) === '/') {
+			return a.pathname + a.search;	
+		} else {
+			return '/' + a.pathname + a.search;
+		}
 	}
 
 	function retrieveServerData() {
