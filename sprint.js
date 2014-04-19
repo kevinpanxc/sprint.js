@@ -8,8 +8,10 @@ Sprint = (function() {
 
 	var userData = null;
 
+	var chromeHistoryAPIBugFix;
+
 	$(function() {
-		var chromeHistoryAPIBugFix = false; // Chrome and Safari calls onpopstate on page load
+		chromeHistoryAPIBugFix = false; // Chrome and Safari calls onpopstate on page load
 
 		$(window).on("popstate", function(e) {
 			var state = e.originalEvent.state;
@@ -19,7 +21,6 @@ Sprint = (function() {
 						publicParams : state.publicParams,
 						hiddenParams : state.hiddenParams });
 			}
-			chromeHistoryAPIBugFix = true;
 		} );
 
 		var serverData = retrieveServerData();
@@ -224,6 +225,7 @@ Sprint = (function() {
 				ajaxNavigate(pageName, transitionName, options);
 			});
 
+			chromeHistoryAPIBugFix = true;
 		}
 	}
 })();
