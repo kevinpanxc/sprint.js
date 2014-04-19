@@ -1,12 +1,12 @@
 # SprintJS
 
-Sprint is a simple JavaScript module that assists in developing websites for Ajax navigation. Sprint manipulates the browser history stack and keeps track of URL parameters to keep the back and forward buttons functional. A demo of a website built using Sprint can be found [here](https://github.com/kevinpanxc/sprintjs-rails-demo).
+Sprint is a simple JavaScript module that helps to build ajax-navigation-based websites (think super fast page browsing). On each page change, Sprint fetches HTML from the server via ajax and replaces the existing content on the page. CSS and JS files are not reloaded each time and site navigation is significantly faster. Sprint also keeps the back and forward buttons working by changing the browser history stack on each page navigation.  
 
 ## Getting Started
 
 ### API
 
-Sprint provides a very simple API via the Sprint JavaScript object. The public functions of the object are:
+Sprint provides a very simple API via the Sprint JavaScript object. The public methods of the object are:
 
 * `addPage`
 * `addTransition`
